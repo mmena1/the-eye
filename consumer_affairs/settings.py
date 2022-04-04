@@ -30,7 +30,7 @@ except KeyError:
 
 DEBUG = os.environ.get("DEBUG_ENABLED") == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
