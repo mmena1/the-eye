@@ -6,7 +6,7 @@ from the_eye.models import Event
 from the_eye.serializers import EventSerializer
 
 
-class TheEyeTests(TestCase):
+class EventListTests(TestCase):
     def test_create_event(self):
         response = self.client.post(
             '/events/', 
@@ -15,7 +15,7 @@ class TheEyeTests(TestCase):
                 'category': 'test',
                 'name': 'test',
                 'data': json.dumps({'test': 'test'}),
-                'timestamp': '2022-01-01T00:00:00Z'
+                'timestamp': '2022-01-01 00:00:00.000000'
             }
         )
         self.assertEqual(response.status_code, 201)
