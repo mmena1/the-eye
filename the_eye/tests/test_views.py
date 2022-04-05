@@ -12,13 +12,29 @@ class EventListTests(TestCase):
             '/events/', 
             {
                 'session_id': '123',
+                'category': 'page_interaction',
+                'name': 'page_view',
+                'data': json.dumps({
+                    "host": "www.consumeraffairs.com",
+                    "path": "/",
+                }),
+                'timestamp': '2022-01-01 00:00:00.000000'
+            }
+        )
+        self.assertEqual(response.status_code, 201)
+
+    def test_create_event_with_invalid_payload(self):
+        response = self.client.post(
+            '/events/', 
+            {
+                'session_id': '123',
                 'category': 'test',
                 'name': 'test',
                 'data': json.dumps({'test': 'test'}),
                 'timestamp': '2022-01-01 00:00:00.000000'
             }
         )
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 400)
 
     def test_list_events(self):
         Event.objects.bulk_create(
