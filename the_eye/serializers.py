@@ -13,8 +13,8 @@ class OptionalSchemeURLValidator(URLValidator):
 
 
 class PayloadSerializer(serializers.Serializer):
-    host = serializers.CharField(max_length=200, validators=[OptionalSchemeURLValidator()])
-    path = serializers.CharField(max_length=200)
+    host = serializers.CharField(required=True, max_length=200, validators=[OptionalSchemeURLValidator()])
+    path = serializers.CharField(required=True, max_length=200)
 
 
 class PageInteractionPageViewSerializer(PayloadSerializer):

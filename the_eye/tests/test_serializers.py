@@ -4,10 +4,16 @@ from django.test import TestCase
 from django.utils import timezone
 
 from the_eye.models import Event
-from the_eye.serializers import EventSerializer
+from the_eye.serializers import (
+    EventSerializer,
+    FormInteractionSubmitSerializer,
+    PageInteractionCtaClickSerializer,
+    PageInteractionPageViewSerializer,
+    PayloadSerializer
+)
 
 
-class EventSerializerTest(TestCase):
+class EventSerializerTestCase(TestCase):
     def setUp(self):
         self.timestamp = timezone.now()
         self.event = Event.objects.create(
@@ -62,3 +68,64 @@ class EventSerializerTest(TestCase):
         )
         self.assertFalse(serializer.is_valid())
         self.assertEqual(serializer.errors['timestamp'], ['timestamp must be in the past'])
+
+    def test_event_serializer_validate_required_fields(self):
+        serializer = EventSerializer(
+            data={}
+        )
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.errors['category'], ['This field is required.'])
+        self.assertEqual(serializer.errors['name'], ['This field is required.'])
+        self.assertEqual(serializer.errors['data'], ['This field is required.'])
+        self.assertEqual(serializer.errors['timestamp'], ['This field is required.'])
+        self.assertEqual(serializer.errors['session_id'], ['This field is required.'])
+
+    def test_payload_host_valid_without_url_scheme(self):
+        serializer = PayloadSerializer(
+            data={
+                'host': 'www.url.com',
+                'path': '/'
+            }
+        )
+        self.assertTrue(serializer.is_valid())
+
+    def test_payload_host_valid_with_url_scheme(self):
+        serializer = PayloadSerializer(
+            data={
+                'host': 'http://www.url.com',
+                'path': '/'
+            }
+        )
+        self.assertTrue(serializer.is_valid())
+
+    def test_page_interaction_page_view_serializer(self):
+        serializer = PageInteractionPageViewSerializer(
+            data={
+                    'host': 'www.url.com',
+                    'path': '/'
+                }
+        )
+        self.assertTrue(serializer.is_valid())
+
+    def test_page_interaction_cta_click_serializer(self):
+        serializer = PageInteractionCtaClickSerializer(
+            data={
+                    'host': 'www.url.com',
+                    'path': '/',
+                    'element': 'button'
+            }
+        )
+        self.assertTrue(serializer.is_valid())
+
+    def test_form_interaction_submit_serializer(self):
+        serializer = FormInteractionSubmitSerializer(
+            data={
+                    'host': 'www.url.com',
+                    'path': '/',
+                    'form': {
+                        'name': 'Foo',
+                        'lastname': 'Bar'
+                    }
+            }
+        )
+        self.assertTrue(serializer.is_valid())
