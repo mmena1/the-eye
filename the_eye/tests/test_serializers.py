@@ -33,7 +33,7 @@ class EventSerializerTestCase(TestCase):
         self.assertEqual(serializer.data['category'], self.event.category)
         self.assertEqual(serializer.data['name'], self.event.name)
         self.assertEqual(serializer.data['data'], self.event.data)
-        self.assertEqual(serializer.data['timestamp'], str(self.event.timestamp.replace(tzinfo=None)))
+        self.assertEqual(serializer.data['timestamp'], str(self.event.timestamp))
 
     def test_event_serializer_deserialize(self):
         serializer = EventSerializer(
