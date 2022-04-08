@@ -1,7 +1,9 @@
 from rest_framework import generics
+from rest_framework.response import Response
 
-from the_eye.serializers import EventSerializer
+from the_eye.jobs import save_event
 from the_eye.models import Event
+from the_eye.serializers import EventSerializer
 
 
 class EventList(generics.ListCreateAPIView):
@@ -21,3 +23,7 @@ class EventList(generics.ListCreateAPIView):
         if start_time and end_time:
             queryset = queryset.filter(timestamp__range=(start_time, end_time))
         return queryset
+
+    def post(self, request, *args, **kwargs):
+        save_event.delay(request.data)
+        return Response(status=201)

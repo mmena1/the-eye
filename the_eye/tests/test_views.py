@@ -1,4 +1,6 @@
 import json
+from unittest.mock import patch
+from django.http import QueryDict
 
 from django.test import TestCase
 
@@ -7,34 +9,24 @@ from the_eye.serializers import EventSerializer
 
 
 class EventListTests(TestCase):
-    def test_create_event(self):
-        response = self.client.post(
-            '/events/', 
-            {
-                'session_id': '123',
-                'category': 'page_interaction',
-                'name': 'page_view',
-                'data': json.dumps({
-                    "host": "www.consumeraffairs.com",
-                    "path": "/",
-                }),
-                'timestamp': '2022-01-01 00:00:00.000000'
-            }
-        )
-        self.assertEqual(response.status_code, 201)
+    @patch("the_eye.views.save_event.delay")
+    def test_create_event(self, mock_async_task):
+        mock_async_task.return_value = None
+        event_data = {
+            'session_id': '123',
+            'category': 'page_interaction',
+            'name': 'page_view',
+            'data': json.dumps({
+                "host": "www.consumeraffairs.com",
+                "path": "/",
+            }),
+            'timestamp': '2022-01-01 00:00:00.000000'
+        }
+        response = self.client.post('/events/', event_data)
 
-    def test_create_event_with_invalid_payload(self):
-        response = self.client.post(
-            '/events/', 
-            {
-                'session_id': '123',
-                'category': 'test',
-                'name': 'test',
-                'data': json.dumps({'test': 'test'}),
-                'timestamp': '2022-01-01 00:00:00.000000'
-            }
-        )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(mock_async_task.called)
+        self.assertEquals(mock_async_task.call_args[0][0].dict(), event_data)
 
     def test_list_events(self):
         Event.objects.bulk_create(
