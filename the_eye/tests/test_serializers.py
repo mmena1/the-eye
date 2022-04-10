@@ -69,6 +69,20 @@ class EventSerializerTestCase(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertEqual(serializer.errors['timestamp'], ['timestamp must be in the past'])
 
+    def test_event_serializer_validate_payload(self):
+        serializer = EventSerializer(
+            self.event,
+            data={
+                'session_id': '123',
+                'category': 'test',
+                'name': 'test',
+                'data': json.dumps({'test': 'test'}),
+                'timestamp': self.timestamp
+            }
+        )
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.errors['non_field_errors'], ['unknown event type: test - test'])
+
     def test_event_serializer_validate_required_fields(self):
         serializer = EventSerializer(
             data={}
