@@ -7,6 +7,9 @@ from the_eye.serializers import EventSerializer
 
 
 class EventList(generics.ListCreateAPIView):
+    """
+    Class based view for listing and creating events.
+    """
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
@@ -25,5 +28,9 @@ class EventList(generics.ListCreateAPIView):
         return queryset
 
     def post(self, request, *args, **kwargs):
+        """
+        Override the default post method to send the event to the queue
+        and save it to the database.
+        """
         save_event.delay(request.data)
         return Response(status=201)

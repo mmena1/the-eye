@@ -3,6 +3,9 @@ from django.utils import timezone
 
 
 class Event(models.Model):
+    """
+    An event is a record of a user's interaction with a website.
+    """
     category = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     data = models.JSONField()

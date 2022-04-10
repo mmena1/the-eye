@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 @job
 def save_event(data):
+    """
+    Save an event to the database or raise a ValidationError if data is invalid.
+    """
     serializer = EventSerializer(data=data)
     if not serializer.is_valid():
         logger.error(json.dumps(data, indent=4, default=str))

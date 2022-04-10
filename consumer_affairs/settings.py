@@ -120,6 +120,8 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S.%f',
 }
 
+# Redis connection settings
+
 RQ_QUEUES = {
     'default': {
         'HOST': 'localhost',
@@ -128,6 +130,8 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 60,
     },
 }
+
+# Logging configuration
 
 LOGGING = {
     'version': 1,
