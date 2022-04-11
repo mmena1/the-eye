@@ -9,6 +9,7 @@ from the_eye.serializers import EventSerializer
 class EventList(generics.ListCreateAPIView):
     """
     Class based view for listing and creating events.
+    It provides both GET and POST methods and also a json response or api view if using a browser.
     """
     queryset = Event.objects.all()
     serializer_class = EventSerializer

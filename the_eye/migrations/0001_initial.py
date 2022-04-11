@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('session_id', models.CharField(max_length=100)),
             ],
             options={
-                'ordering': ['timestamp'],
+                'ordering': ['-timestamp'],
             },
         ),
     ]

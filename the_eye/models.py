@@ -13,4 +13,4 @@ class Event(models.Model):
     session_id = models.CharField(max_length=100)
 
     class Meta:
-        ordering = ['timestamp']
+        ordering = ['-timestamp']
