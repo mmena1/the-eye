@@ -1,59 +1,104 @@
 # The Eye
 Service that collects user web interactions from applications.
 
-## Get Started
+## Get Started - Docker
 
-**Prerequisites:**
+1. **Requirements:**
 
-- Python 3.9
-- Unix compatible environment (Linux/OSX)
-- A running Redis server instance. The easiest way is to run through the official docker image:
-  ```
-  docker run --rm -p 6379:6379 -d redis:latest
-  ```
+    Copy the `.env.example` file to `.env` and edit it to populate its variables.
+    ```bash
+    cp .env.example .env
+    ```
 
-Initialize a python virtual environment:
+    Run the following command to generate a random secret key and add it to your `.env` file.
+    ```bash
+    python -c "from django.core.management.utils import get_random_secret_key;print(get_random_secret_key())"
 
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
+    # .env
+    DJANGO_SECRET_KEY=<generated_key>
+    ```
 
-**Install the project dependencies:**
+    Add postgres variables to your `.env` file:
 
-```bash
-pip install -r requirements.txt
-```
+    ```bash
+    cat <<EOT >> .env
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=postgres
+    POSTGRES_HOST=db
+    POSTGRES_PORT=5432
+    EOT
+    ```
 
-**Initialize the project:**
+    You can set different values or use these as default.
 
-Copy the `.env.example` file to `.env` and edit it to populate its variables.
-```bash
-cp .env.example .env
-```
+1. **Start the app**
 
-Run the following command to generate a random secret key and add it to your `.env` file.
-```bash
-python -c "from django.core.management.utils import get_random_secret_key;print(get_random_secret_key())"
+    Make sure you have [docker-compose](https://docs.docker.com/compose/install/) installed on your system. Then just run:
 
-# .env
-DJANGO_SECRET_KEY=<generated_key>
-```
+    ```
+    docker-compose up
+    ```
 
-Run DB migrations:
+    This will start the following containers:
+    - Redis
+    - Postgres
+    - Django RQ
+    - Django app
 
-```bash
-python manage.py migrate
-```
+    After it finishes configuring everything you can make `curl` requests to the endpoints as described in the [Using the service](#using-the-service) section.
+## Get Started - Without Docker
 
-Start the Django server:
-```
-python manage.py runserver
-```
-Start the RQ worker on another terminal prompt:
-```
-python manage.py rqworker
-```
+1. **Requirements:**
+
+    - Python 3.9
+    - Unix compatible environment (Linux/OSX)
+    - A running Redis server instance. The easiest way is to run through the official docker image:
+      ```
+      docker run --rm -p 6379:6379 -d redis:latest
+      ```
+
+1. **Initialize a python virtual environment:**
+
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+1. **Install the project dependencies:**
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+1. **Initialize the project:**
+
+    Copy the `.env.example` file to `.env` and edit it to populate its variables.
+    ```bash
+    cp .env.example .env
+    ```
+
+    Run the following command to generate a random secret key and add it to your `.env` file.
+    ```bash
+    python -c "from django.core.management.utils import get_random_secret_key;print(get_random_secret_key())"
+
+    # .env
+    DJANGO_SECRET_KEY=<generated_key>
+    ```
+
+    Run DB migrations:
+
+    ```bash
+    python manage.py migrate
+    ```
+
+    Start the Django server:
+    ```
+    python manage.py runserver
+    ```
+    Start the RQ worker on another terminal prompt:
+    ```
+    python manage.py rqworker
+    ```
 
 ## Using the service
 The service exposes two endpoints to query and register events.

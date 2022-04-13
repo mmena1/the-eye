@@ -1,0 +1,38 @@
+version: "3.9"
+   
+services:
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+  redis:
+    image: redis
+  django_rq:
+    build: .
+    command: python manage.py rqworker --settings=consumer_affairs.settings.docker
+    volumes:
+      - django_rq_data:/var/lib/rq
+    depends_on:
+      - redis
+      - app
+    env_file:
+      - .env
+  app:
+    build: .
+    command: >
+      sh -c "python3 manage.py wait_for_db &&
+             python3 manage.py migrate &&
+             python3 manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DJANGO_SETTINGS_MODULE=consumer_affairs.settings.docker
+    env_file:
+      - .env
+volumes:
+  postgres_data:
+  django_rq_data:
