@@ -1,5 +1,50 @@
 # The Eye
-Service that collects user web interactions from applications.
+
+Service that collects user web interactions as events in `json` format from external applications. These applications can send events to the Eye as POST requests to the `/events` endpoint which are then validated and stored in the database using an async queue by django-rq.
+
+Example of valid events:
+
+```json
+{
+  "session_id": "e2085be5-9137-4e4e-80b5-f1ffddc25423",
+  "category": "page interaction",
+  "name": "pageview",
+  "data": {
+    "host": "www.consumeraffairs.com",
+    "path": "/",
+  },
+  "timestamp": "2021-01-01 09:15:27.243860"
+}
+
+{
+  "session_id": "e2085be5-9137-4e4e-80b5-f1ffddc25423",
+  "category": "page interaction",
+  "name": "cta click",
+  "data": {
+    "host": "www.consumeraffairs.com",
+    "path": "/",
+    "element": "chat bubble"
+  },
+  "timestamp": "2021-01-01 09:15:27.243860"
+}
+
+{
+  "session_id": "e2085be5-9137-4e4e-80b5-f1ffddc25423",
+  "category": "form interaction",
+  "name": "submit",
+  "data": {
+    "host": "www.consumeraffairs.com",
+    "path": "/",
+    "form": {
+      "first_name": "John",
+      "last_name": "Doe"
+    }
+  },
+  "timestamp": "2021-01-01 09:15:27.243860"
+}
+```
+
+There are 2 ways to run it: with Docker or with a local server. For demo purposes, the local server uses SQLite while the Docker approach uses PostgreSQL. But it can easily be changed on the settings.
 
 ## Get Started - Docker
 
@@ -12,7 +57,7 @@ Service that collects user web interactions from applications.
 
     Run the following command to generate a random secret key and add it to your `.env` file.
     ```bash
-    python -c "from django.core.management.utils import get_random_secret_key;print(get_random_secret_key())"
+    base64 /dev/urandom | head -c50
 
     # .env
     DJANGO_SECRET_KEY=<generated_key>
@@ -46,7 +91,7 @@ Service that collects user web interactions from applications.
     - Django app
 
     After it finishes configuring everything you can make `curl` requests to the endpoints as described in the [Using the service](#using-the-service) section.
-## Get Started - Without Docker
+## Get Started - Local Server
 
 1. **Requirements:**
 
@@ -107,7 +152,7 @@ A few things to consider:
 - Timestamps can be either ISO format or `%Y-%m-%d %H:%M:%S.%f`, which is basically the same except a space instead of `T`.
   - `2022-04-11T01:08:01.407119` (ISO)
   - `2022-04-11 01:08:01.407119`
-- There are only 3 types of allowed payload data:
+- At the moment, there are only 3 types of allowed payload data:
   - category: `page_interaction` and name: `page_view`:
     ```json
     "data": {
