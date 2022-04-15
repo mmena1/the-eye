@@ -11,7 +11,7 @@ services:
     image: redis
   django_rq:
     build: .
-    command: python manage.py rqworker --settings=consumer_affairs.settings.docker
+    command: python manage.py rqworker --settings=config.settings.docker
     volumes:
       - django_rq_data:/var/lib/rq
     depends_on:
@@ -30,7 +30,7 @@ services:
     depends_on:
       - db
     environment:
-      - DJANGO_SETTINGS_MODULE=consumer_affairs.settings.docker
+      - DJANGO_SETTINGS_MODULE=config.settings.docker
     env_file:
       - .env
 volumes:
