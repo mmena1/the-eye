@@ -210,6 +210,16 @@ curl http://localhost:8000/events?start_time=2022-01-01&end_time=2022-02-01
 curl http://localhost:8000/events?session_id=abc123&category=name&start_time=2022-01-01&end_time=2022-02-01
 ```
 
+### Debugging errors
+The non-docker approach uses a file logger that contains the logs of the service. You can inspect the `the_eye/logs/server.log` file for errors that have been raised along with the request payload.
+
+As for the docker approach, you can use the built-in docker logs command to inspect the logs of a running container:
+
+```bash
+docker logs consumer-affairs-test-django_rq-1 --tail 50 --follow
+```
+This will show the last 50 lines of the Django RQ logs and will keep the prompt open to listen to new log data.
+
 ## Unit Tests
 Run the following command to run all unit tests:
 ```
