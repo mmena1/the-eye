@@ -225,3 +225,16 @@ Run the following command to run all unit tests:
 ```
 python manage.py test
 ```
+## Distribute the service
+You can generate a `.tar.gz` file with the service code:
+  
+  ```bash
+  python setup.py sdist
+  ```
+
+Then you can install it on another Django project by running the following command:
+
+```bash
+pip install /path/to/django-the-eye-0.1.tar.gz
+```
+NOTE: An easier way would be to upload the service to the Python Package Index (PyPI) or to a private repository manager (such as [Artifactory](https://jfrog.com/artifactory/)) and then add it to your `requirements.txt` file.
